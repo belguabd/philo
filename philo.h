@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 14:42:33 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/23 15:36:11 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/23 21:35:15 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ typedef struct philo
 	pthread_t th;
 	int id;
 	long start;
-	int num_philo;
-	int time_die;
+	size_t time_die;
 	int time_eat;
 	int time_sleep;
 	int nbr_each_philo;
+	size_t last_meal;
 	t_mtr *mtr;
 
 } t_philo;
@@ -42,6 +42,8 @@ typedef struct monitor
 {
 	t_philo **philo;
 	pthread_mutex_t *forks;
+	int stop_simulation;
+	int num_philo;
 	pthread_mutex_t print_mutex;
 
 } t_mtr;
