@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:10:48 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/23 22:01:14 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/24 11:37:45 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int ft_usleep(size_t milliseconds)
 }
 void ft_eat(t_philo *philo)
 {
+
 	pthread_mutex_lock(&philo->mtr->print_mutex);
 	printf("%ld %d is eating\n", ft_get_current_time() - philo->start, philo->id);
 	philo->last_meal = ft_get_current_time();
@@ -88,15 +89,12 @@ void *routine(void *arg)
 		printf("%ld %d has taken a fork\n", ft_get_current_time() - philo->start, philo->id);
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 		ft_eat(philo);
-		// if ((ft_get_current_time() - philo->last_meal) >= philo->time_die)
-		// 	ft_die(philo);
-		// printf("===================================last meal %zu\n", ft_get_current_time() - philo->last_meal);
 		pthread_mutex_unlock(&philo->mtr->forks[left]);
 		pthread_mutex_unlock(&philo->mtr->forks[right]);
 		ft_sleep(philo);
 		ft_think(philo);
 	}
-	return NULL;
+	return (NULL);
 }
 
 void *monitor_philo(void *arg)
@@ -113,14 +111,15 @@ void *monitor_philo(void *arg)
 			{
 				printf("%ld %d died\n", ft_get_current_time() - mtr->philo[i]->start, mtr->philo[i]->id);
 				mtr->stop_simulation = -1;
-				pthread_mutex_unlock(&mtr->print_mutex);
+				// pthread_mutex_unlock(&mtr->print_mutex);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&mtr->print_mutex);
 			i++;
 		}
 	}
-	exit(0);
+	if (mtr->stop_simulation == -1)
+		pthread_mutex_unlock(&mtr->print_mutex);
 	return (NULL);
 }
 
@@ -161,6 +160,7 @@ int main(int argc, char *av[])
 
 	pthread_t thread_monitor;
 	pthread_create(&thread_monitor, NULL, &monitor_philo, mtr);
+
 	i = 0;
 	while (i < num_philo)
 		pthread_join(mtr->philo[i++]->th, NULL);
