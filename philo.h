@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 14:42:33 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/23 21:35:15 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/25 14:01:06 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct monitor
 	int stop_simulation;
 	int num_philo;
 	pthread_mutex_t print_mutex;
+	pthread_mutex_t check_is_died;
 
 } t_mtr;
 
