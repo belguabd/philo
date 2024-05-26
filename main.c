@@ -6,26 +6,31 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:10:48 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/25 15:00:22 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/26 20:36:08 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int check_is_died(t_philo *philo)
+int check_is_died(t_mtr *mtr)
 {
-	pthread_mutex_lock(&philo->mtr->check_is_died);
-	if (!philo->mtr->stop_simulation)
-	{
-		pthread_mutex_unlock(&philo->mtr->check_is_died);
-		return (0);
-	}
-	pthread_mutex_unlock(&philo->mtr->check_is_died);
-	return (-1);
+	int result;
+
+	pthread_mutex_lock(&mtr->stop_simu_mutex);
+	pthread_mutex_lock(&mtr->check_is_died);
+	if (!mtr->stop_simulation)
+		result = 0;
+	else
+		result = -1;
+	pthread_mutex_unlock(&mtr->check_is_died);
+	pthread_mutex_unlock(&mtr->stop_simu_mutex);
+	return result;
 }
+
 t_philo *init_philo(t_philo *philo, char *av[])
 {
 	struct timeval tv;
+
 	gettimeofday(&tv, NULL);
 	philo = (t_philo *)malloc(sizeof(t_philo));
 	if (!philo)
@@ -35,15 +40,18 @@ t_philo *init_philo(t_philo *philo, char *av[])
 	philo->time_sleep = ft_atoi(av[4]);
 	philo->start = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	philo->last_meal = philo->start;
-	philo->nbr_each_philo = -1;
+	pthread_mutex_init(&philo->meal_mutex, NULL);
 	if (av[5])
 		philo->nbr_each_philo = ft_atoi(av[5]);
+	else
+		philo->nbr_each_philo = -1;
 
 	return (philo);
 }
 size_t ft_get_current_time(void)
 {
 	struct timeval tv;
+
 	if (gettimeofday(&tv, NULL) == -1)
 		ft_putendl_fd("gettimeofday() error", 2);
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
@@ -51,6 +59,7 @@ size_t ft_get_current_time(void)
 int ft_usleep(size_t milliseconds)
 {
 	size_t start;
+
 	start = ft_get_current_time();
 	while ((ft_get_current_time() - start) < milliseconds)
 		usleep(500);
@@ -58,32 +67,40 @@ int ft_usleep(size_t milliseconds)
 }
 void ft_eat(t_philo *philo)
 {
+	long current_time;
 
-	if (!check_is_died(philo))
+	if (!check_is_died(philo->mtr))
 	{
+		current_time = ft_get_current_time();
 		pthread_mutex_lock(&philo->mtr->print_mutex);
-		printf("%ld %d is eating\n", ft_get_current_time() - philo->start, philo->id);
-		philo->last_meal = ft_get_current_time();
+		printf("%ld %d is eating\n", current_time - philo->start, philo->id);
+		philo->last_meal = current_time;
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
 	ft_usleep(philo->time_eat);
 }
 void ft_sleep(t_philo *philo)
 {
-	if (!check_is_died(philo))
+	long current_time;
+
+	if (!check_is_died(philo->mtr))
 	{
+		current_time = ft_get_current_time();
 		pthread_mutex_lock(&philo->mtr->print_mutex);
-		printf("%ld %d is sleeping\n", ft_get_current_time() - philo->start, philo->id);
+		printf("%ld %d is sleeping\n", current_time - philo->start, philo->id);
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
 	ft_usleep(philo->time_sleep);
 }
 void ft_think(t_philo *philo)
 {
-	if (!check_is_died(philo))
+	long current_time;
+
+	if (!check_is_died(philo->mtr))
 	{
+		current_time = ft_get_current_time();
 		pthread_mutex_lock(&philo->mtr->print_mutex);
-		printf("%ld %d is thinking\n", ft_get_current_time() - philo->start, philo->id);
+		printf("%ld %d is thinking\n", current_time - philo->start, philo->id);
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
 }
@@ -92,22 +109,28 @@ void *routine(void *arg)
 	int left;
 	int right;
 	t_philo *philo = (t_philo *)arg;
-
 	if (philo->id % 2 == 0)
 		ft_usleep(philo->time_eat);
-	while (!philo->mtr->stop_simulation)
+	while (1337)
 	{
+		pthread_mutex_lock(&philo->mtr->stop_simu_mutex);
+		if (philo->mtr->stop_simulation == -1)
+		{
+			pthread_mutex_unlock(&philo->mtr->stop_simu_mutex);
+			break;
+		}
+		pthread_mutex_unlock(&philo->mtr->stop_simu_mutex);
 		left = philo->id - 1;
 		right = (philo->id) % philo->mtr->num_philo;
 		pthread_mutex_lock(&philo->mtr->forks[left]);
-		if (!check_is_died(philo))
+		if (!check_is_died(philo->mtr))
 		{
 			pthread_mutex_lock(&philo->mtr->print_mutex);
 			printf("%ld %d has taken a fork\n", ft_get_current_time() - philo->start, philo->id);
 			pthread_mutex_unlock(&philo->mtr->print_mutex);
 		}
 		pthread_mutex_lock(&philo->mtr->forks[right]);
-		if (!check_is_died(philo))
+		if (!check_is_died(philo->mtr))
 		{
 			pthread_mutex_lock(&philo->mtr->print_mutex);
 			printf("%ld %d has taken a fork\n", ft_get_current_time() - philo->start, philo->id);
@@ -126,15 +149,25 @@ void *monitor_philo(void *arg)
 {
 	t_mtr *mtr = (t_mtr *)arg;
 	int i = 0;
-	while (!mtr->stop_simulation)
+	while (1337)
 	{
+		pthread_mutex_lock(&mtr->stop_simu_mutex);
+		if (mtr->stop_simulation == -1)
+		{
+			pthread_mutex_unlock(&mtr->stop_simu_mutex);
+			break;
+		}
+		pthread_mutex_unlock(&mtr->stop_simu_mutex);
+
 		i = 0;
 		while (i < mtr->num_philo)
 		{
 			pthread_mutex_lock(&mtr->print_mutex);
 			if ((ft_get_current_time() - mtr->philo[i]->last_meal) >= mtr->philo[i]->time_die)
 			{
+				pthread_mutex_lock(&mtr->stop_simu_mutex);
 				mtr->stop_simulation = -1;
+				pthread_mutex_unlock(&mtr->stop_simu_mutex);
 				pthread_mutex_unlock(&mtr->print_mutex);
 				pthread_mutex_lock(&mtr->print_mutex);
 				printf("%ld %d died\n", ft_get_current_time() - mtr->philo[i]->start, mtr->philo[i]->id);
@@ -162,9 +195,11 @@ int main(int argc, char *av[])
 	mtr->philo = (t_philo **)malloc(sizeof(t_philo *) * num_philo);
 	mtr->stop_simulation = 0;
 	mtr->num_philo = num_philo;
+
 	mtr->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * num_philo);
 	pthread_mutex_init(&mtr->print_mutex, NULL);
 	pthread_mutex_init(&mtr->check_is_died, NULL);
+	pthread_mutex_init(&mtr->stop_simu_mutex, NULL);
 	i = 0;
 	while (i < num_philo)
 		pthread_mutex_init(&mtr->forks[i++], NULL);

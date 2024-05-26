@@ -6,13 +6,13 @@
 #    By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/19 14:39:26 by belguabd          #+#    #+#              #
-#    Updated: 2024/05/23 10:49:35 by belguabd         ###   ########.fr        #
+#    Updated: 2024/05/26 20:27:41 by belguabd         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
 NAME = philo
-CFLAGE = -Wall -Wextra -Werror  -g -fsanitize=address
+CFLAGE = -Wall -Wextra -Werror  -g -pthread -fsanitize=thread #-fsanitize=address 
 
 # ------folder------ #
 UTILS = utils
