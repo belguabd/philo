@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 14:42:33 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/26 19:26:47 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/27 13:22:46 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <time.h>
 #include <sys/time.h>
 
@@ -32,22 +33,25 @@ typedef struct philo
 	size_t time_die;
 	int time_eat;
 	int time_sleep;
-	int nbr_each_philo;
 	size_t last_meal;
+	int num_eat;
 	pthread_mutex_t meal_mutex;
 	t_mtr *mtr;
 
 } t_philo;
-
 typedef struct monitor
 {
 	t_philo **philo;
 	pthread_mutex_t *forks;
 	int stop_simulation;
 	int num_philo;
+	int stop_eat;
+	int nbr_each_philo;
 	pthread_mutex_t print_mutex;
 	pthread_mutex_t stop_simu_mutex;
 	pthread_mutex_t check_is_died;
+	pthread_mutex_t stop_eat_mutex;
+	pthread_mutex_t num_eat_mutex;
 
 } t_mtr;
 

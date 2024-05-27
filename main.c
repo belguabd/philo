@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:10:48 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/26 20:36:08 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/27 13:41:48 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,8 @@ t_philo *init_philo(t_philo *philo, char *av[])
 	philo->time_sleep = ft_atoi(av[4]);
 	philo->start = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	philo->last_meal = philo->start;
+	philo->num_eat = 0;
 	pthread_mutex_init(&philo->meal_mutex, NULL);
-	if (av[5])
-		philo->nbr_each_philo = ft_atoi(av[5]);
-	else
-		philo->nbr_each_philo = -1;
 
 	return (philo);
 }
@@ -75,6 +72,18 @@ void ft_eat(t_philo *philo)
 		pthread_mutex_lock(&philo->mtr->print_mutex);
 		printf("%ld %d is eating\n", current_time - philo->start, philo->id);
 		philo->last_meal = current_time;
+		if (philo->mtr->nbr_each_philo != -1)
+		{
+			pthread_mutex_lock(&philo->mtr->num_eat_mutex);
+			philo->num_eat++;
+			pthread_mutex_unlock(&philo->mtr->num_eat_mutex);
+		}
+		else
+		{
+			pthread_mutex_lock(&philo->mtr->num_eat_mutex);
+			philo->num_eat = -2;
+			pthread_mutex_unlock(&philo->mtr->num_eat_mutex);
+		}
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
 	ft_usleep(philo->time_eat);
@@ -120,6 +129,13 @@ void *routine(void *arg)
 			break;
 		}
 		pthread_mutex_unlock(&philo->mtr->stop_simu_mutex);
+		pthread_mutex_lock(&philo->mtr->stop_eat_mutex);
+		if (philo->mtr->stop_eat == 0)
+		{
+			pthread_mutex_unlock(&philo->mtr->stop_eat_mutex);
+			return (NULL);
+		}
+		pthread_mutex_unlock(&philo->mtr->stop_eat_mutex);
 		left = philo->id - 1;
 		right = (philo->id) % philo->mtr->num_philo;
 		pthread_mutex_lock(&philo->mtr->forks[left]);
@@ -145,6 +161,22 @@ void *routine(void *arg)
 	return (NULL);
 }
 
+bool stop_eat(t_mtr *mtr)
+{
+	int i = 0;
+	while (i < mtr->num_philo)
+	{
+		pthread_mutex_lock(&mtr->num_eat_mutex);
+		if (mtr->philo[i]->num_eat < mtr->nbr_each_philo)
+		{
+			pthread_mutex_unlock(&mtr->num_eat_mutex);
+			return (false);
+		}
+		pthread_mutex_unlock(&mtr->num_eat_mutex);
+		i++;
+	}
+	return (true);
+}
 void *monitor_philo(void *arg)
 {
 	t_mtr *mtr = (t_mtr *)arg;
@@ -158,13 +190,21 @@ void *monitor_philo(void *arg)
 			break;
 		}
 		pthread_mutex_unlock(&mtr->stop_simu_mutex);
-
+		pthread_mutex_lock(&mtr->stop_eat_mutex);
+		if (stop_eat(mtr))
+		{
+			mtr->stop_eat = 0;
+			pthread_mutex_unlock(&mtr->stop_eat_mutex);
+			return (NULL);
+		}
+		pthread_mutex_unlock(&mtr->stop_eat_mutex);
 		i = 0;
 		while (i < mtr->num_philo)
 		{
 			pthread_mutex_lock(&mtr->print_mutex);
 			if ((ft_get_current_time() - mtr->philo[i]->last_meal) >= mtr->philo[i]->time_die)
 			{
+
 				pthread_mutex_lock(&mtr->stop_simu_mutex);
 				mtr->stop_simulation = -1;
 				pthread_mutex_unlock(&mtr->stop_simu_mutex);
@@ -200,6 +240,13 @@ int main(int argc, char *av[])
 	pthread_mutex_init(&mtr->print_mutex, NULL);
 	pthread_mutex_init(&mtr->check_is_died, NULL);
 	pthread_mutex_init(&mtr->stop_simu_mutex, NULL);
+	pthread_mutex_init(&mtr->stop_eat_mutex, NULL);
+	pthread_mutex_init(&mtr->num_eat_mutex, NULL);
+	mtr->stop_eat = -2;
+	if (av[5])
+		mtr->nbr_each_philo = ft_atoi(av[5]);
+	else
+		mtr->nbr_each_philo = -1;
 	i = 0;
 	while (i < num_philo)
 		pthread_mutex_init(&mtr->forks[i++], NULL);
