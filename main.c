@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:10:48 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/27 13:41:48 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/27 14:59:30 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,14 +113,44 @@ void ft_think(t_philo *philo)
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
 }
+void ft_wait_all_philos(t_philo *philo)
+{
+	int a = 0;
+	pthread_mutex_lock(&philo->mtr->wait_philos);
+	philo->mtr->philo_ready += 1;
+	while (philo->mtr->philo_ready != philo->mtr->num_philo)
+	{
+		pthread_mutex_unlock(&philo->mtr->wait_philos);
+		a++;
+		pthread_mutex_lock(&philo->mtr->wait_philos);
+	}
+	pthread_mutex_unlock(&philo->mtr->wait_philos);
+}
 void *routine(void *arg)
 {
 	int left;
 	int right;
+
 	t_philo *philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
 		ft_usleep(philo->time_eat);
-	while (1337)
+	if (philo->mtr->num_philo == 1)
+	{
+		printf("%ld %d has taken a fork\n", ft_get_current_time() - philo->start, philo->id);
+		ft_usleep(philo->time_die);
+		printf("%ld %d died\n", ft_get_current_time() - philo->start, philo->id);
+		return (NULL);
+	}
+	int num_meal = 1;
+	int i = 0;
+	int count = 0;
+	if (philo->mtr->nbr_each_philo != -1)
+	{
+		num_meal = philo->mtr->nbr_each_philo;
+		count = 1;
+	}
+
+	while (i < num_meal)
 	{
 		pthread_mutex_lock(&philo->mtr->stop_simu_mutex);
 		if (philo->mtr->stop_simulation == -1)
@@ -153,10 +183,17 @@ void *routine(void *arg)
 			pthread_mutex_unlock(&philo->mtr->print_mutex);
 		}
 		ft_eat(philo);
+		if (i + count == philo->mtr->nbr_each_philo)
+		{
+			pthread_mutex_unlock(&philo->mtr->forks[right]);
+			pthread_mutex_unlock(&philo->mtr->forks[left]);
+			break;
+		}
 		pthread_mutex_unlock(&philo->mtr->forks[right]);
 		pthread_mutex_unlock(&philo->mtr->forks[left]);
 		ft_sleep(philo);
 		ft_think(philo);
+		i += count;
 	}
 	return (NULL);
 }
@@ -181,6 +218,11 @@ void *monitor_philo(void *arg)
 {
 	t_mtr *mtr = (t_mtr *)arg;
 	int i = 0;
+	if (mtr->num_philo == 1)
+	{
+		return (NULL);
+	}
+
 	while (1337)
 	{
 		pthread_mutex_lock(&mtr->stop_simu_mutex);
@@ -235,13 +277,13 @@ int main(int argc, char *av[])
 	mtr->philo = (t_philo **)malloc(sizeof(t_philo *) * num_philo);
 	mtr->stop_simulation = 0;
 	mtr->num_philo = num_philo;
-
 	mtr->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * num_philo);
 	pthread_mutex_init(&mtr->print_mutex, NULL);
 	pthread_mutex_init(&mtr->check_is_died, NULL);
 	pthread_mutex_init(&mtr->stop_simu_mutex, NULL);
 	pthread_mutex_init(&mtr->stop_eat_mutex, NULL);
 	pthread_mutex_init(&mtr->num_eat_mutex, NULL);
+	pthread_mutex_init(&mtr->wait_philos, NULL);
 	mtr->stop_eat = -2;
 	if (av[5])
 		mtr->nbr_each_philo = ft_atoi(av[5]);

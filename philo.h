@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 14:42:33 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/27 13:22:46 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/27 14:45:38 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,13 @@ typedef struct monitor
 	int num_philo;
 	int stop_eat;
 	int nbr_each_philo;
+	int philo_ready;
 	pthread_mutex_t print_mutex;
 	pthread_mutex_t stop_simu_mutex;
 	pthread_mutex_t check_is_died;
 	pthread_mutex_t stop_eat_mutex;
 	pthread_mutex_t num_eat_mutex;
+	pthread_mutex_t wait_philos;
 
 } t_mtr;
 
