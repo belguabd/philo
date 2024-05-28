@@ -6,7 +6,7 @@
 #    By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/19 14:39:26 by belguabd          #+#    #+#              #
-#    Updated: 2024/05/28 15:19:10 by belguabd         ###   ########.fr        #
+#    Updated: 2024/05/28 20:11:15 by belguabd         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,14 +16,16 @@ CFLAGE = -Wall -Wextra -Werror  #-g -fsanitize=thread  #-fsanitize=address  #-pt
 
 # ------folder------ #
 UTILS = utils
+SRC = src
 
 # ------source------ #
-SRC = main.c \
+SRC_M = main.c \
+	$(SRC)/ft_free.c $(SRC)/philo_actions.c $(SRC)/philo_monitor.c $(SRC)/philo_routine.c $(SRC)/init_utils.c\
 	$(UTILS)/ft_atoi.c $(UTILS)/ft_putendl_fd.c $(UTILS)/ft_strlen.c \
-	$(UTILS)/ft_parsing.c
+	$(UTILS)/ft_parsing.c \
 
 #------object------#
-OBJ = $(SRC:.c=.o)
+OBJ = $(SRC_M:.c=.o)
 
 #------all------#
 all: $(NAME)
@@ -33,7 +35,7 @@ $(NAME): $(OBJ)
 	$(CC) $(CFLAGE) $(OBJ) -o $(NAME) 
 
 #------object------#
-%.o : %.c philo.h
+%.o : %.c include/philo.h
 	$(CC) $(CFLAGE) -c $< -o $@
 
 #------clean------#

@@ -6,11 +6,11 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:01:04 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/21 14:02:17 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/28 20:08:56 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "../include/philo.h"
 
 int	ft_atoi(const char *str)
 {
@@ -29,7 +29,7 @@ int	ft_atoi(const char *str)
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		res = (str[i] - 48) + (res * 10);
-		if (res > LONG_MAX)
+		if (res > 9223372036854775807)
 		{
 			if (sign == 1)
 				return (-1);

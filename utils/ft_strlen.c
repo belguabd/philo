@@ -6,11 +6,11 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:31:45 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/23 10:32:01 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/28 20:09:04 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "../include/philo.h"
 
 size_t	ft_strlen(const char *s)
 {
