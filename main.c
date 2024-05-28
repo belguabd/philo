@@ -6,12 +6,47 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:10:48 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/28 13:10:18 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/28 15:21:07 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+void free_monitor(t_mtr *mtr)
+{
+	int i;
+	if (mtr)
+	{
+		if (mtr->philo)
+		{
+			i = 0;
+			while (i < mtr->num_philo)
+			{
+				if (mtr->philo[i])
+				{
 
+					pthread_mutex_destroy(&mtr->philo[i]->meal_mutex);
+					free(mtr->philo[i]);
+				}
+				i++;
+			}
+			free(mtr->philo);
+		}
+		if (mtr->forks)
+		{
+			i = 0;
+			while (i < mtr->num_philo)
+				pthread_mutex_destroy(&mtr->forks[i++]);
+			free(mtr->forks);
+		}
+		pthread_mutex_destroy(&mtr->print_mutex);
+		pthread_mutex_destroy(&mtr->check_is_died);
+		pthread_mutex_destroy(&mtr->stop_simu_mutex);
+		pthread_mutex_destroy(&mtr->stop_eat_mutex);
+		pthread_mutex_destroy(&mtr->num_eat_mutex);
+		pthread_mutex_destroy(&mtr->wait_philos);
+		free(mtr);
+	}
+}
 int check_is_died(t_mtr *mtr)
 {
 	int result;
@@ -181,7 +216,7 @@ void *routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (check_one_philo(&philo))
-		return (NULL);
+		return (free_monitor(philo->mtr), NULL);
 	(1) && (num_meal = 1, i = 0, count = 0);
 	if (philo->mtr->nbr_each_philo != -1)
 	{
@@ -191,7 +226,7 @@ void *routine(void *arg)
 	while (i < num_meal)
 	{
 		if (stop_simu_routine(&philo))
-			return (NULL);
+			return (free_monitor(philo->mtr), NULL);
 		if (philo_take_forks_and_eat(&philo, i, count))
 			break;
 		ft_sleep(philo);
@@ -283,7 +318,7 @@ int init_monitor(t_mtr **mtr, char *av[])
 	int num_philo;
 
 	(*mtr) = (t_mtr *)malloc(sizeof(t_mtr));
-	if (!mtr)
+	if (!*mtr)
 		return (-1);
 	num_philo = ft_atoi(av[1]);
 	(*mtr)->philo = (t_philo **)malloc(sizeof(t_philo *) * num_philo);
@@ -372,6 +407,8 @@ int join_threads(t_mtr **mtr)
 	}
 	if (pthread_join((*mtr)->thread_monitor, NULL))
 		return (-1);
+
+	free_monitor(*mtr);
 	return (0);
 }
 int ft_parsing(char *av[])
@@ -390,27 +427,7 @@ void f()
 {
 	system("leaks philo");
 }
-void free_monitor(t_mtr *mtr)
-{
-	int i;
-	if (mtr)
-	{
-		if (mtr->philo)
-		{
-			i = 0;
-			while (i < mtr->num_philo)
-			{
-				if (mtr->philo[i])
-					free(mtr->philo[i]);
-				i++;
-			}
-			free(mtr->philo);
-		}
-		if (mtr->forks)
-			free(mtr->forks);
-		free(mtr);
-	}
-}
+
 int main(int argc, char *av[])
 {
 	t_mtr *mtr;
@@ -422,7 +439,10 @@ int main(int argc, char *av[])
 	if (argc > 6)
 		return (ft_putendl_fd("invalid arguments ", 2), 1);
 	if (init_monitor(&mtr, av))
+	{
+		
 		return (free_monitor(mtr), 1);
+	}
 	if (init_mutexes(&mtr))
 		return (free_monitor(mtr), 1);
 	if (init_philosophers(&mtr, av))
@@ -430,6 +450,6 @@ int main(int argc, char *av[])
 	if (create_philos(&mtr))
 		return (free_monitor(mtr), 1);
 	if (join_threads(&mtr))
-		return (free_monitor(mtr), 1);
+		return (1);
 	return (0);
 }
