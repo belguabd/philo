@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 14:42:33 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/27 14:45:38 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/28 10:51:50 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct monitor
 {
 	t_philo **philo;
 	pthread_mutex_t *forks;
+	pthread_t thread_monitor;
 	int stop_simulation;
 	int num_philo;
 	int stop_eat;
@@ -60,5 +61,6 @@ typedef struct monitor
 int ft_atoi(const char *str);
 void ft_putendl_fd(char *s, int fd);
 size_t ft_strlen(const char *s);
+long ft_atoi_parsing(char *str);
 
 #endif

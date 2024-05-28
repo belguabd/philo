@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:53:08 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/21 15:04:35 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/27 21:59:05 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,4 @@ void	ft_putendl_fd(char *s, int fd)
 		}
 		write(fd, "\n", 1);
 	}
-    exit(1);
 }
