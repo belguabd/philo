@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:30:59 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/28 20:08:37 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/02 15:44:17 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ int	init_philosophers(t_mtr **mtr, char *av[])
 		(*mtr)->philo[i] = philo;
 		(*mtr)->philo[i]->id = i + 1;
 		(*mtr)->philo[i]->mtr = (*mtr);
+		(*mtr)->philo[i]->must_eat_count = 0;
 		i++;
 	}
 	return (0);

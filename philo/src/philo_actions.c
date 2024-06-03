@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:43:12 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/28 20:08:41 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/02 15:20:09 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,22 @@ size_t	ft_get_current_time(void)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int	ft_usleep(size_t milliseconds)
+int	ft_usleep(size_t milliseconds, t_mtr *mtr)
 {
 	size_t	start;
 
 	start = ft_get_current_time();
 	while ((ft_get_current_time() - start) < milliseconds)
+	{
+		pthread_mutex_lock(&mtr->stop_simu_mutex);
+		if (mtr->stop_simulation == -1)
+		{
+			pthread_mutex_unlock(&mtr->stop_simu_mutex);
+			return (0);
+		}
+		pthread_mutex_unlock(&mtr->stop_simu_mutex);
 		usleep(500);
+	}
 	return (0);
 }
 
@@ -41,6 +50,7 @@ void	ft_eat(t_philo *philo)
 		pthread_mutex_lock(&philo->mtr->print_mutex);
 		printf("%ld %d is eating\n", current_time - philo->start, philo->id);
 		philo->last_meal = current_time;
+		philo->must_eat_count++;
 		if (philo->mtr->nbr_each_philo != -1)
 		{
 			pthread_mutex_lock(&philo->mtr->num_eat_mutex);
@@ -49,7 +59,7 @@ void	ft_eat(t_philo *philo)
 		}
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
-	ft_usleep(philo->time_eat);
+	ft_usleep(philo->time_eat, philo->mtr);
 }
 
 void	ft_sleep(t_philo *philo)
@@ -63,7 +73,7 @@ void	ft_sleep(t_philo *philo)
 		printf("%ld %d is sleeping\n", current_time - philo->start, philo->id);
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
-	ft_usleep(philo->time_sleep);
+	ft_usleep(philo->time_sleep, philo->mtr);
 }
 
 void	ft_think(t_philo *philo)

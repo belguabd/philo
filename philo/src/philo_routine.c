@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:51:01 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/28 20:08:47 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/02 15:21:40 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 int	check_one_philo(t_philo **philo)
 {
 	if ((*philo)->id % 2 == 0)
-		ft_usleep((*philo)->time_eat);
+		ft_usleep((*philo)->time_eat, (*philo)->mtr);
 	if ((*philo)->mtr->num_philo == 1)
 	{
 		printf("%ld %d has taken a fork\n", ft_get_current_time()
 			- (*philo)->start, (*philo)->id);
-		ft_usleep((*philo)->time_die);
+		ft_usleep((*philo)->time_die, (*philo)->mtr);
 		printf("%ld %d died\n", ft_get_current_time()
 			- (*philo)->start, (*philo)->id);
 		return (-1);
@@ -68,11 +68,11 @@ void	take_fork(t_philo **philo)
 	}
 }
 
-int	philo_take_forks_and_eat(t_philo **philo, int i, int count)
+int	philo_take_forks_and_eat(t_philo **philo)
 {
 	take_fork(&(*philo));
 	ft_eat((*philo));
-	if (i + count == (*philo)->mtr->nbr_each_philo)
+	if ((*philo)->must_eat_count == (*philo)->mtr->nbr_each_philo)
 	{
 		pthread_mutex_unlock(&(*philo)->mtr
 			->forks[((*philo)->id) % (*philo)->mtr->num_philo]);
@@ -88,28 +88,18 @@ int	philo_take_forks_and_eat(t_philo **philo, int i, int count)
 void	*routine(void *arg)
 {
 	t_philo	*philo;
-	int		num_meal;
-	int		i;
-	int		count;
 
 	philo = (t_philo *)arg;
 	if (check_one_philo(&philo))
-		return (free_monitor(philo->mtr), NULL);
-	(1) && (num_meal = 1, i = 0, count = 0);
-	if (philo->mtr->nbr_each_philo != -1)
-	{
-		num_meal = philo->mtr->nbr_each_philo;
-		count = 1;
-	}
-	while (i < num_meal)
+		return (NULL);
+	while (1337)
 	{
 		if (stop_simu_routine(&philo))
-			return (free_monitor(philo->mtr), NULL);
-		if (philo_take_forks_and_eat(&philo, i, count))
+			return (NULL);
+		if (philo_take_forks_and_eat(&philo))
 			break ;
 		ft_sleep(philo);
 		ft_think(philo);
-		i += count;
 	}
 	return (NULL);
 }

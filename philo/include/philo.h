@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 14:42:33 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/28 20:04:38 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/02 15:18:24 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct philo
 	size_t			last_meal;
 	int				num_eat;
 	t_mtr			*mtr;
+	int				must_eat_count;
 
 }	t_philo;
 typedef struct monitor
@@ -72,7 +73,7 @@ void	*routine(void *arg);
 int		check_is_died(t_mtr *mtr);
 bool	stop_eat(t_mtr **mtr);
 size_t	ft_get_current_time(void);
-int		ft_usleep(size_t milliseconds);
+int		ft_usleep(size_t milliseconds, t_mtr *mtr);
 void	ft_eat(t_philo *philo);
 void	ft_sleep(t_philo *philo);
 void	ft_think(t_philo *philo);

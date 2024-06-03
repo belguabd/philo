@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:54:07 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/28 20:08:44 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/05/31 10:00:26 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	ft_check_philo_died(t_mtr **mtr, int i)
 {
 	pthread_mutex_lock(&(*mtr)->print_mutex);
 	if ((ft_get_current_time() - (*mtr)->philo[i]->last_meal)
-		>= (*mtr)->philo[i]->time_die)
+		> (*mtr)->philo[i]->time_die)
 	{
 		pthread_mutex_lock(&(*mtr)->stop_simu_mutex);
 		(*mtr)->stop_simulation = -1;
