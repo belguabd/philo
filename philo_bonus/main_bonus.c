@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 15:07:45 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/03 16:04:22 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/04 15:13:36 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ void	cleanup_semaphores(t_data *data)
 
 int	main(int argc, char *av[])
 {
-	t_data	*data;
+	t_data	data;
+	t_philo	philos[200];
 
 	if (ft_parsing(av))
 		return (ft_putendl_fd("invalid arguments ", 2), 1);
@@ -77,7 +78,9 @@ int	main(int argc, char *av[])
 		return (ft_putendl_fd("invalid arguments ", 2), 1);
 	if (argc > 6)
 		return (ft_putendl_fd("invalid arguments ", 2), 1);
-	init_data(&data, av);
-	start_simulation(data);
-	cleanup_semaphores(data);
+	if (ft_atoi(av[1]) > 200)
+		return (ft_putendl_fd("invalid arguments ", 2), 1);
+	init_data(&data, philos, av);
+	start_simulation(&data);
+	cleanup_semaphores(&data);
 }

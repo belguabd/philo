@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:54:07 by belguabd          #+#    #+#             */
-/*   Updated: 2024/05/31 10:00:26 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/04 14:07:53 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	ft_break_simulation(t_mtr **mtr)
 int	ft_check_philo_died(t_mtr **mtr, int i)
 {
 	pthread_mutex_lock(&(*mtr)->print_mutex);
+	pthread_mutex_lock(&(*mtr)->last_meal_mutex);
 	if ((ft_get_current_time() - (*mtr)->philo[i]->last_meal)
 		> (*mtr)->philo[i]->time_die)
 	{
@@ -43,10 +44,12 @@ int	ft_check_philo_died(t_mtr **mtr, int i)
 		pthread_mutex_unlock(&(*mtr)->stop_simu_mutex);
 		pthread_mutex_unlock(&(*mtr)->print_mutex);
 		pthread_mutex_lock(&(*mtr)->print_mutex);
+		pthread_mutex_unlock(&(*mtr)->last_meal_mutex);
 		printf("%ld %d died\n", ft_get_current_time() - (*mtr)->philo[i]->start,
 			(*mtr)->philo[i]->id);
 		return (-1);
 	}
+	pthread_mutex_unlock(&(*mtr)->last_meal_mutex);
 	pthread_mutex_unlock(&(*mtr)->print_mutex);
 	return (0);
 }

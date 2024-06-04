@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:30:59 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/02 15:44:17 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/04 14:04:59 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ int	init_mutexes(t_mtr **mtr)
 	if (pthread_mutex_init(&(*mtr)->num_eat_mutex, NULL))
 		return (-1);
 	if (pthread_mutex_init(&(*mtr)->wait_philos, NULL))
+		return (-1);
+	if (pthread_mutex_init(&(*mtr)->last_meal_mutex, NULL))
 		return (-1);
 	return (0);
 }

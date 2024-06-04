@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 09:20:57 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/03 16:02:38 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/04 14:31:38 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_philo
 
 typedef struct s_data
 {
+	t_philo			*philos;
 	int				stop_simulation;
 	int				num_philo;
 	int				stop_eat;
@@ -50,12 +51,11 @@ typedef struct s_data
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				must_eat_count;
+	bool			is_alive;
 	sem_t			*forks;
 	sem_t			*output_lock;
 	sem_t			*output_died;
 	sem_t			*check_died;
-	t_philo			*philos;
-	bool			is_alive;
 	sem_t			*is_alive_lock;
 	sem_t			*stop_eat_lock;
 	sem_t			*last_meal_lock;
@@ -65,7 +65,7 @@ int		ft_atoi(const char *str);
 void	ft_putendl_fd(char *s, int fd);
 size_t	ft_strlen(const char *s);
 long	ft_atoi_parsing(char *str);
-void	init_data(t_data **data, char *av[]);
+void	init_data(t_data *data, t_philo *philo, char *av[]);
 void	print_status(t_philo *philo, const char *status);
 void	ft_eat(t_philo *philo);
 void	ft_sleep(t_philo *philo);
@@ -74,7 +74,7 @@ void	ft_philosopher_routine(t_philo *philo);
 void	philo_routine(t_philo *philo);
 void	*monitor(void *arg);
 void	check_philo_death(t_data *data, t_philo *philo);
-void	terminate_all_philos(t_data *data);
+void	terminate_all_philos(t_data *data, t_philo *philo);
 size_t	ft_get_current_time(void);
 int		ft_usleep(size_t milliseconds, t_data *data);
 #endif

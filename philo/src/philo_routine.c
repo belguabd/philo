@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:51:01 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/02 15:21:40 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/04 13:39:26 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,14 @@ int	stop_simu_routine(t_philo **philo)
 	}
 	pthread_mutex_unlock(&(*philo)->mtr->stop_simu_mutex);
 	pthread_mutex_lock(&(*philo)->mtr->stop_eat_mutex);
+	pthread_mutex_lock(&(*philo)->mtr->stop_simu_mutex);
 	if ((*philo)->mtr->stop_eat == 0)
 	{
 		pthread_mutex_unlock(&(*philo)->mtr->stop_eat_mutex);
+		pthread_mutex_unlock(&(*philo)->mtr->stop_simu_mutex);
 		return (-1);
 	}
+	pthread_mutex_unlock(&(*philo)->mtr->stop_simu_mutex);
 	pthread_mutex_unlock(&(*philo)->mtr->stop_eat_mutex);
 	return (0);
 }
@@ -50,7 +53,7 @@ int	stop_simu_routine(t_philo **philo)
 void	take_fork(t_philo **philo)
 {
 	pthread_mutex_lock(&(*philo)->mtr->forks[(*philo)->id - 1]);
-	if (!check_is_died((*philo)->mtr))
+	if((*philo)->mtr->stop_simulation != -1)
 	{
 		pthread_mutex_lock(&(*philo)->mtr->print_mutex);
 		printf("%ld %d has taken a fork\n",
@@ -59,7 +62,7 @@ void	take_fork(t_philo **philo)
 	}
 	pthread_mutex_lock(&(*philo)->mtr
 		->forks[((*philo)->id) % (*philo)->mtr->num_philo]);
-	if (!check_is_died((*philo)->mtr))
+	if((*philo)->mtr->stop_simulation != -1)
 	{
 		pthread_mutex_lock(&(*philo)->mtr->print_mutex);
 		printf("%ld %d has taken a fork\n",

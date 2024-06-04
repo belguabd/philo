@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:43:12 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/02 15:20:09 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/04 14:10:36 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,15 @@ int	ft_usleep(size_t milliseconds, t_mtr *mtr)
 void	ft_eat(t_philo *philo)
 {
 	long	current_time;
-
-	if (!check_is_died(philo->mtr))
+	pthread_mutex_lock(&philo->mtr->stop_simu_mutex);
+	if(philo->mtr->stop_simulation != -1)
 	{
 		current_time = ft_get_current_time();
 		pthread_mutex_lock(&philo->mtr->print_mutex);
 		printf("%ld %d is eating\n", current_time - philo->start, philo->id);
+		pthread_mutex_lock(&philo->mtr->last_meal_mutex);
 		philo->last_meal = current_time;
+		pthread_mutex_unlock(&philo->mtr->last_meal_mutex);
 		philo->must_eat_count++;
 		if (philo->mtr->nbr_each_philo != -1)
 		{
@@ -59,32 +61,35 @@ void	ft_eat(t_philo *philo)
 		}
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
+	pthread_mutex_unlock(&philo->mtr->stop_simu_mutex);
 	ft_usleep(philo->time_eat, philo->mtr);
 }
 
 void	ft_sleep(t_philo *philo)
 {
 	long	current_time;
-
-	if (!check_is_died(philo->mtr))
+	pthread_mutex_lock(&philo->mtr->stop_simu_mutex);
+	if(philo->mtr->stop_simulation != -1)
 	{
 		current_time = ft_get_current_time();
 		pthread_mutex_lock(&philo->mtr->print_mutex);
 		printf("%ld %d is sleeping\n", current_time - philo->start, philo->id);
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
+	pthread_mutex_unlock(&philo->mtr->stop_simu_mutex);
 	ft_usleep(philo->time_sleep, philo->mtr);
 }
 
 void	ft_think(t_philo *philo)
 {
 	long	current_time;
-
-	if (!check_is_died(philo->mtr))
+	pthread_mutex_lock(&philo->mtr->stop_simu_mutex);
+	if(philo->mtr->stop_simulation != -1)
 	{
 		current_time = ft_get_current_time();
 		pthread_mutex_lock(&philo->mtr->print_mutex);
 		printf("%ld %d is thinking\n", current_time - philo->start, philo->id);
 		pthread_mutex_unlock(&philo->mtr->print_mutex);
 	}
+	pthread_mutex_unlock(&philo->mtr->stop_simu_mutex);
 }

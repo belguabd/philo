@@ -6,23 +6,27 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 15:46:12 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/03 15:55:10 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/04 15:39:05 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_bonus.h"
 
-void	terminate_all_philos(t_data *data)
+void terminate_all_philos(t_data *data, t_philo *philo)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (i < data->num_philo)
-		kill(data->philos[i++].pid, SIGINT);
+	{
+		if (philo->id != data->philos[i].id)
+			kill(data->philos[i].pid, SIGINT);
+		i++;
+	}
 	exit(EXIT_FAILURE);
 }
 
-void	check_philo_death(t_data *data, t_philo *philo)
+void check_philo_death(t_data *data, t_philo *philo)
 {
 	if (sem_wait(data->last_meal_lock))
 		ft_putendl_fd("sem_wait failed :)", 2);
@@ -33,24 +37,24 @@ void	check_philo_death(t_data *data, t_philo *philo)
 		if (sem_wait(philo->data->output_lock))
 			ft_putendl_fd("sem_wait failed :)", 2);
 		printf("%ld %d %s\n",
-			ft_get_current_time() - philo->start, philo->id, "died");
+			   ft_get_current_time() - philo->start, philo->id, "died");
 		if (sem_wait(data->is_alive_lock))
 			ft_putendl_fd("sem_wait failed :)", 2);
 		philo->data->is_alive = false;
 		if (sem_post(data->is_alive_lock))
 			ft_putendl_fd("sem_post failed :)", 2);
-		terminate_all_philos(data);
+		terminate_all_philos(data, philo);
 	}
 	if (sem_post(data->last_meal_lock))
 		ft_putendl_fd("sem_post failed :)", 2);
 	usleep(100);
 }
 
-void	*monitor(void *arg)
+void *monitor(void *arg)
 {
-	t_philo	*philo;
-	t_data	*data;
-	int		i;
+	t_philo *philo;
+	t_data *data;
+	int i;
 
 	(1) && (philo = (t_philo *)arg, i = 0);
 	data = philo->data;
@@ -59,9 +63,9 @@ void	*monitor(void *arg)
 	return (NULL);
 }
 
-void	philo_routine(t_philo *philo)
+void philo_routine(t_philo *philo)
 {
-	t_data	*data;
+	t_data *data;
 
 	data = philo->data;
 	if (sem_wait(data->forks))
@@ -79,23 +83,32 @@ void	philo_routine(t_philo *philo)
 	ft_think(philo);
 }
 
-void	ft_philosopher_routine(t_philo *philo)
+void ft_philosopher_routine(t_philo *philo)
 {
-	t_data	*data;
+	t_data *data;
 
 	data = philo->data;
+	sem_wait(philo->data->last_meal_lock);
+	philo->last_meal = ft_get_current_time();
+	sem_post(philo->data->last_meal_lock);
+	philo->start = ft_get_current_time();
 	if (pthread_create(&philo->monitor_thread, NULL, monitor, philo))
 		ft_putendl_fd("pthread_create failed :)", 2);
-	philo->start = ft_get_current_time();
-	philo->last_meal = ft_get_current_time();
 	if (data->num_philo == 1)
 		return (print_status(philo, "has taken a fork"),
-			print_status(philo, "died"));
+				print_status(philo, "died"));
 	if (philo->id % 2 == 0)
 		ft_usleep(data->time_to_eat, data);
 	while (1337)
 	{
 		philo_routine(philo);
+		if (sem_wait(data->is_alive_lock))
+			ft_putendl_fd("sem_wait failed :)", 2);
+		if(!data->is_alive)
+			exit(0);
+		if (sem_post(data->is_alive_lock))
+			ft_putendl_fd("sem_post failed :)", 2);
+		
 		if (philo->stop_eat == philo->data->must_eat_count)
 			exit(0);
 	}

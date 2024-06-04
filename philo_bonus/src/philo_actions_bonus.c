@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 15:44:23 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/03 15:55:06 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/04 15:30:39 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	ft_sleep(t_philo *philo)
 			ft_putendl_fd("sem_post failed :)", 2);
 	}
 	if (sem_post(philo->data->is_alive_lock))
-		ft_putendl_fd("sem_post failed :)", 2);
+			ft_putendl_fd("sem_post failed :)", 2);
 	ft_usleep(philo->time_sleep, philo->data);
 }
 
