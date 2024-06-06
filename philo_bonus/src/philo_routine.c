@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 15:46:12 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/05 14:46:17 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/06 15:50:19 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ void	ft_philosopher_routine(t_philo *philo)
 		ft_putendl_fd("pthread_create failed :)", 2);
 	if (data->num_philo == 1)
 		return (print_status(philo, "has taken a fork"),
+			ft_usleep(philo->time_die, data),
 			print_status(philo, "died"));
 	if (philo->id % 2 == 0)
 		ft_usleep(data->time_to_eat, data);

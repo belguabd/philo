@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:43:12 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/06 11:49:59 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/06 15:45:06 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	ft_usleep(size_t milliseconds)
 
 	start = ft_get_current_time();
 	while ((ft_get_current_time() - start) < milliseconds)
-		usleep(500);
+		usleep(250);
 }
 
 void	ft_eat(t_philo *philo)

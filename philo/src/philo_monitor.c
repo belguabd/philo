@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:54:07 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/06 12:11:43 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/06 15:46:35 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ void	check_philos_death(t_mtr *mtr, bool *check_is_died)
 			> mtr->philo[i]->time_die)
 		{
 			pthread_mutex_lock(&mtr->print_mutex);
+			*check_is_died = true;
 			printf("%ld %d died\n",
 				ft_get_current_time() - mtr->philo[i]->start,
 				mtr->philo[i]->id);
-			*check_is_died = true;
 			pthread_mutex_unlock(&mtr->last_meal_mutex);
 			break ;
 		}

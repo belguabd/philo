@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:10:48 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/06 11:43:54 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/06 15:46:12 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,19 @@ int	join_threads(t_mtr **mtr)
 	int	i;
 
 	i = 0;
-	while (i < (*mtr)->num_philo)
+	if ((*mtr)->num_philo == 1)
 	{
-		if (pthread_detach((*mtr)->philo[i]->th))
+		if (pthread_join((*mtr)->philo[i]->th, NULL))
 			return (-1);
-		i++;
+	}
+	else
+	{
+		while (i < (*mtr)->num_philo)
+		{
+			if (pthread_detach((*mtr)->philo[i]->th))
+				return (-1);
+			i++;
+		}
 	}
 	if (pthread_join((*mtr)->thread_monitor, NULL))
 		return (-1);
