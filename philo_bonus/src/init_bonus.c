@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 15:41:59 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/04 14:31:06 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/04 16:18:39 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ void	ft_init_data(t_data *data, char *av[])
 
 void	init_philos(t_data *data)
 {
-	int	i;
-	size_t current_time;
+	size_t	current_time;
+	int		i;
 
 	current_time = ft_get_current_time();
 	i = 0;

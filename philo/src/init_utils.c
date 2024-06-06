@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:30:59 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/04 14:04:59 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/06 11:49:11 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@ t_philo	*init_philo(t_philo *philo, char *av[])
 	philo->time_sleep = ft_atoi(av[4]);
 	philo->start = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	philo->last_meal = philo->start;
-	philo->num_eat = 0;
+	if (av[5])
+		philo->num_eat = ft_atoi(av[5]);
+	else
+		philo->num_eat = -1;
 	if (pthread_mutex_init(&philo->meal_mutex, NULL))
 		return (NULL);
 	return (philo);
@@ -63,16 +66,12 @@ int	init_monitor(t_mtr **mtr, char *av[])
 		return (-1);
 	(*mtr)->stop_simulation = 0;
 	(*mtr)->num_philo = num_philo;
-	(*mtr)->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
-			* num_philo);
+	(*mtr)->forks = (pthread_mutex_t *)malloc
+		(sizeof(pthread_mutex_t) * num_philo);
 	if (!(*mtr)->forks)
 		return (-1);
 	(*mtr)->philo_ready = 0;
 	(*mtr)->stop_eat = -2;
-	if (av[5])
-		(*mtr)->nbr_each_philo = ft_atoi(av[5]);
-	else
-		(*mtr)->nbr_each_philo = -1;
 	return (0);
 }
 
@@ -115,7 +114,6 @@ int	init_philosophers(t_mtr **mtr, char *av[])
 		(*mtr)->philo[i] = philo;
 		(*mtr)->philo[i]->id = i + 1;
 		(*mtr)->philo[i]->mtr = (*mtr);
-		(*mtr)->philo[i]->must_eat_count = 0;
 		i++;
 	}
 	return (0);
