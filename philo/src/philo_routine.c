@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:51:01 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/06 15:48:29 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/09 13:52:25 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,13 @@ bool	must_eat(t_mtr *mtr)
 	i = 0;
 	while (i < mtr->num_philo)
 	{
+		pthread_mutex_lock(&mtr->num_eat_mutex);
 		if (mtr->philo[i]->num_eat != 0)
+		{
+			pthread_mutex_unlock(&mtr->num_eat_mutex);
 			return (false);
+		}
+		pthread_mutex_unlock(&mtr->num_eat_mutex);
 		i++;
 	}
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:30:59 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/06 11:49:11 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/10 10:30:27 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ t_philo	*init_philo(t_philo *philo, char *av[])
 	philo = (t_philo *)malloc(sizeof(t_philo));
 	if (!philo)
 		return (NULL);
-	philo->time_die = ft_atoi(av[2]);
-	philo->time_eat = ft_atoi(av[3]);
-	philo->time_sleep = ft_atoi(av[4]);
+	philo->time_die = ft_atoi_parsing(av[2]);
+	philo->time_eat = ft_atoi_parsing(av[3]);
+	philo->time_sleep = ft_atoi_parsing(av[4]);
 	philo->start = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	philo->last_meal = philo->start;
 	if (av[5])
-		philo->num_eat = ft_atoi(av[5]);
+		philo->num_eat = ft_atoi_parsing(av[5]);
 	else
 		philo->num_eat = -1;
 	if (pthread_mutex_init(&philo->meal_mutex, NULL))
@@ -60,18 +60,16 @@ int	init_monitor(t_mtr **mtr, char *av[])
 	(*mtr) = (t_mtr *)malloc(sizeof(t_mtr));
 	if (!*mtr)
 		return (-1);
-	num_philo = ft_atoi(av[1]);
+	num_philo = ft_atoi_parsing(av[1]);
 	(*mtr)->philo = (t_philo **)malloc(sizeof(t_philo *) * num_philo);
 	if (!(*mtr)->philo)
 		return (-1);
-	(*mtr)->stop_simulation = 0;
 	(*mtr)->num_philo = num_philo;
 	(*mtr)->forks = (pthread_mutex_t *)malloc
 		(sizeof(pthread_mutex_t) * num_philo);
 	if (!(*mtr)->forks)
 		return (-1);
 	(*mtr)->philo_ready = 0;
-	(*mtr)->stop_eat = -2;
 	return (0);
 }
 
@@ -85,15 +83,7 @@ int	init_mutexes(t_mtr **mtr)
 			return (-1);
 	if (pthread_mutex_init(&(*mtr)->print_mutex, NULL))
 		return (-1);
-	if (pthread_mutex_init(&(*mtr)->check_is_died, NULL))
-		return (-1);
-	if (pthread_mutex_init(&(*mtr)->stop_simu_mutex, NULL))
-		return (-1);
-	if (pthread_mutex_init(&(*mtr)->stop_eat_mutex, NULL))
-		return (-1);
 	if (pthread_mutex_init(&(*mtr)->num_eat_mutex, NULL))
-		return (-1);
-	if (pthread_mutex_init(&(*mtr)->wait_philos, NULL))
 		return (-1);
 	if (pthread_mutex_init(&(*mtr)->last_meal_mutex, NULL))
 		return (-1);

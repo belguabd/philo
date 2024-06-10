@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:54:07 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/06 15:46:35 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/09 11:35:31 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,8 @@ void	*monitor_philo(void *arg)
 			break ;
 		check_philos_death(mtr, &check_is_died);
 		if (check_is_died)
-		{
-			free_monitor(mtr);
 			break ;
-		}
+		ft_usleep(1);
 	}
 	return (NULL);
 }

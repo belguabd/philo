@@ -6,7 +6,7 @@
 #    By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/29 09:22:02 by belguabd          #+#    #+#              #
-#    Updated: 2024/06/04 17:39:00 by belguabd         ###   ########.fr        #
+#    Updated: 2024/06/10 10:21:19 by belguabd         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ SRC = src
 
 # ------source------ #
 SRC_B = main_bonus.c \
-	$(UTILS)/ft_atoi_bonus.c $(UTILS)/ft_putendl_fd_bonus.c $(UTILS)/ft_strlen_bonus.c  \
+	$(UTILS)/ft_putendl_fd_bonus.c $(UTILS)/ft_strlen_bonus.c  \
 	$(UTILS)/ft_parsing_bonus.c $(UTILS)/time_utils.c \
 	$(SRC)/init_bonus.c $(SRC)/philo_actions_bonus.c $(SRC)/philo_routine.c
 

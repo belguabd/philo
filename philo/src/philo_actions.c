@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:43:12 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/06 15:45:06 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/06 19:50:14 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,10 @@ void	ft_eat(t_philo *philo)
 	pthread_mutex_lock(&philo->mtr->last_meal_mutex);
 	philo->last_meal = current_time;
 	pthread_mutex_unlock(&philo->mtr->last_meal_mutex);
+	pthread_mutex_lock(&philo->mtr->num_eat_mutex);
 	if (philo->num_eat > 0)
 		philo->num_eat--;
+	pthread_mutex_unlock(&philo->mtr->num_eat_mutex);
 	ft_usleep(philo->time_eat);
 }
 

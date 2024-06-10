@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 14:42:33 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/06 12:59:24 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/10 10:24:58 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,27 +42,22 @@ typedef struct philo
 typedef struct monitor
 {
 	pthread_mutex_t	print_mutex;
-	pthread_mutex_t	stop_simu_mutex;
+
 	pthread_mutex_t	last_meal_mutex;
-	pthread_mutex_t	check_is_died;
-	pthread_mutex_t	stop_eat_mutex;
 	pthread_mutex_t	num_eat_mutex;
-	pthread_mutex_t	wait_philos;
 	pthread_mutex_t	*forks;
 	pthread_t		thread_monitor;
 	t_philo			**philo;
-	int				stop_simulation;
 	int				num_philo;
 	int				stop_eat;
 	int				nbr_each_philo;
 	int				philo_ready;
-
 }	t_mtr;
 
-int		ft_atoi(const char *str);
+int		ft_atoi_parsing(const char *str);
 void	ft_putendl_fd(char *s, int fd);
 size_t	ft_strlen(const char *s);
-long	ft_atoi_parsing(char *str);
+int		ft_atoi_parsing(const char *str);
 void	free_monitor(t_mtr *mtr);
 int		init_monitor(t_mtr **mtr, char *av[]);
 int		init_mutexes(t_mtr **mtr);
@@ -78,4 +73,5 @@ void	ft_sleep(t_philo *philo);
 void	ft_think(t_philo *philo);
 void	print_status(t_philo *philo, char *status);
 bool	must_eat(t_mtr *mtr);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 09:20:57 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/04 14:31:38 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/09 19:09:29 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct s_philo
 	size_t			time_die;
 	int				time_eat;
 	int				time_sleep;
-	size_t			last_meal;
+	_Atomic size_t	last_meal;
 	int				num_eat;
 	pid_t			pid;
 	pthread_t		monitor_thread;
@@ -44,27 +44,21 @@ typedef struct s_philo
 typedef struct s_data
 {
 	t_philo			*philos;
-	int				stop_simulation;
 	int				num_philo;
 	int				stop_eat;
 	size_t			time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				must_eat_count;
-	bool			is_alive;
+	_Atomic bool	is_alive;
 	sem_t			*forks;
 	sem_t			*output_lock;
-	sem_t			*output_died;
-	sem_t			*check_died;
-	sem_t			*is_alive_lock;
-	sem_t			*stop_eat_lock;
-	sem_t			*last_meal_lock;
 }	t_data;
 
-int		ft_atoi(const char *str);
+int		ft_atoi_parsing(const char *str);
 void	ft_putendl_fd(char *s, int fd);
 size_t	ft_strlen(const char *s);
-long	ft_atoi_parsing(char *str);
+int		ft_atoi_parsing(const char *str);
 void	init_data(t_data *data, t_philo *philo, char *av[]);
 void	print_status(t_philo *philo, const char *status);
 void	ft_eat(t_philo *philo);

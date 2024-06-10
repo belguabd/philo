@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:10:48 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/06 15:46:12 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/10 10:28:23 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	ft_parsing(char *av[])
 	i = 1;
 	while (av[i])
 	{
-		if (ft_atoi_parsing(av[i]) == -1)
+		if (ft_atoi_parsing(av[i]) < 0)
 			return (-1);
 		i++;
 	}
@@ -81,15 +81,16 @@ int	main(int argc, char *av[])
 		return (ft_putendl_fd("invalid arguments ", 2), 1);
 	if (argc > 6)
 		return (ft_putendl_fd("invalid arguments ", 2), 1);
+	if (ft_atoi_parsing(av[1]) > 200)
+		return (ft_putendl_fd("invalid arguments ", 2), 1);
 	if (init_monitor(&mtr, av))
-		return (free_monitor(mtr), -1);
+		return (1);
 	if (init_mutexes(&mtr))
-		return (free_monitor(mtr), -1);
+		return (1);
 	if (init_philosophers(&mtr, av))
-		return (free_monitor(mtr), -1);
-	if (create_philos(&mtr))
-		return (free_monitor(mtr), -1);
-	if (join_threads(&mtr))
-		return (free_monitor(mtr), -1);
+		return (0);
+	create_philos(&mtr);
+	join_threads(&mtr);
+	free_monitor(mtr);
 	return (0);
 }

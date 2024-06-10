@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 15:07:45 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/05 11:47:32 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/10 10:22:30 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,6 @@ void	cleanup_semaphores(t_data *data)
 	sem_unlink("/fork");
 	sem_close(data->output_lock);
 	sem_unlink("/output_lock");
-	sem_close(data->is_alive_lock);
-	sem_unlink("/is_alive_lock");
-	sem_close(data->stop_eat_lock);
-	sem_unlink("/stop_eat_lock");
 }
 
 int	main(int argc, char *av[])
@@ -78,7 +74,7 @@ int	main(int argc, char *av[])
 		return (ft_putendl_fd("invalid arguments ", 2), 1);
 	if (argc > 6)
 		return (ft_putendl_fd("invalid arguments ", 2), 1);
-	if (ft_atoi(av[1]) > 200)
+	if (ft_atoi_parsing(av[1]) > 200)
 		return (ft_putendl_fd("invalid arguments ", 2), 1);
 	init_data(&data, philos, av);
 	start_simulation(&data);

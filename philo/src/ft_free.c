@@ -6,7 +6,7 @@
 /*   By: belguabd <belguabd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:34:17 by belguabd          #+#    #+#             */
-/*   Updated: 2024/06/05 22:18:13 by belguabd         ###   ########.fr       */
+/*   Updated: 2024/06/09 13:49:06 by belguabd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,7 @@ void	ft_free_philos(t_mtr *mtr)
 void	ft_destroy_mutex(t_mtr *mtr)
 {
 	pthread_mutex_destroy(&mtr->print_mutex);
-	pthread_mutex_destroy(&mtr->check_is_died);
-	pthread_mutex_destroy(&mtr->stop_simu_mutex);
-	pthread_mutex_destroy(&mtr->stop_eat_mutex);
 	pthread_mutex_destroy(&mtr->num_eat_mutex);
-	pthread_mutex_destroy(&mtr->wait_philos);
 }
 
 void	free_monitor(t_mtr *mtr)
